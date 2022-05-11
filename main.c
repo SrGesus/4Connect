@@ -2,8 +2,8 @@
 #include "include.h"
 
 int main() {
-	rows = 6;
-	columns = 7;
+	rows = 10;
+	columns = 10;
 	int** board = createBoard();
 	clearBoard(board);
 	printBoard(board);
@@ -19,5 +19,6 @@ int main() {
 		clearScreen();
 		placeDisk(board, c, player);
 		printBoard(board);
+		printf("\nTerminal state values: %d\n", isTerminal(board));
 	}
 }

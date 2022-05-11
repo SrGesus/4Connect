@@ -15,8 +15,9 @@ void printBoard(int** board);
 void clearBoard(int** board);
 bool isFull(int** board, int column);
 void placeDisk(int** board, int column, int player);
+int isTerminal (int** board);
 
 #include "board.c"
 #include "interface.c"
-
+#include "terminal.c"
 
