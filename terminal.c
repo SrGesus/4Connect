@@ -43,42 +43,52 @@ int isTerminal (int** board) {
 
 	//check for diagonal lines (that go right-down)
 	for (int r = 0; r < rows - 3; r++) {
-	for (int c = 0; c < columns - 3; c++) {
-		if (board[r][c] != 32) {
-			bool isEqual = 1;
+	    for (int c = 0; c < columns - 3; c++) {
+		    if (board[r][c] != 32) {
+			    bool isEqual = 1;
 
-			for (int i = 1; i < 4; i++) {
-				if (board[r][c] != board[r+i][c+i]) {
-					isEqual = 0;
-					break;
-				}
-			}
-			if (isEqual) {
-				return board[r][c];
-			}
-		}
-	}
-}
+    			for (int i = 1; i < 4; i++) {
+	    			if (board[r][c] != board[r+i][c+i]) {
+			    		isEqual = 0;
+		    			break;
+				    }
+			    }
+			    if (isEqual) {
+				    return board[r][c];
+			    }
+		    }
+	    }
+    }
 
 
-//check for diagonal lines (that go right-up)
-for (int r = rows-1; r > 2; r--) {
-	for (int c = 0; c < columns - 3; c++) {
-			if (board[r][c] != 32) {
-				bool isEqual = 1;
+    //check for diagonal lines (that go right-up)
+    for (int r = rows-1; r > 2; r--) {
+	    for (int c = 0; c < columns - 3; c++) {
+		    if (board[r][c] != 32) {
+			   	bool isEqual = 1;
+   				for (int i = 1; i < 4; i++) {
+    				if (board[r][c] != board[r-i][c+i]) {
+	    				isEqual = 0;
+		    			break;
+				    }
+			    }
+			    if (isEqual) {
+				    return board[r][c];
+			    }
+		    }
+	    }
+    }
+    
+    //check for tie
+    bool hasSpace = 0;
 
-				for (int i = 1; i < 4; i++) {
-					if (board[r][c] != board[r-i][c+i]) {
-						isEqual = 0;
-						break;
-					}
-				}
-				if (isEqual) {
-					return board[r][c];
-				}
-			}
-		}
-	}
-
+    for (int i = 0; i < columns; i++) {
+        if (!isFull(board, i)) {
+            hasSpace = 1;
+        }
+    } 
+    if (!hasSpace) {
+        return 0;
+    }
 	return 2;
 }

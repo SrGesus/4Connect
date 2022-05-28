@@ -1,23 +1,20 @@
-
-//headers
-#include <stdio.h>
+//native headers
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
+#include <unistd.h>
+#include <time.h>
 
 //global variables
-int rows, columns; //this is the board's syntax: board[rows][columns]
+int rows, columns;
+int count = 0;
+int depthLimit = 2;
+int defaultLimit = 7;
+int debug = 1;
 
-//function declarations
-
-//board.c
-int** createBoard();
-void printBoard(int** board);
-void clearBoard(int** board);
-bool isFull(int** board, int column);
-void placeDisk(int** board, int column, int player);
-int isTerminal (int** board);
-
+//4Connect files
 #include "board.c"
 #include "interface.c"
 #include "terminal.c"
-
+#include "minimax.c"
