@@ -10,7 +10,7 @@
 int rows, columns;
 int count = 0;
 int depthLimit = 2;
-int defaultLimit = 7;
+int defaultLimit = 10;
 int debug = 1;
 
 //4Connect files

@@ -72,7 +72,7 @@ int minvalue (int** board, int iteration) {
         return (depthLimit + 2 - iteration) * utility;
     }
     //if it exceedes the imposed depth limit, return 333 - code for this situation
-    if (iteration > depthLimit) {
+    if (iteration == depthLimit) {
         printf("\nDumped");
         return 333;
     }
@@ -114,7 +114,7 @@ int maxvalue (int** board, int iteration) {
         return (depthLimit + 2 - iteration) * utility;
     }
     //if it exceedes the imposed depth limit, return 333 - code for this situation
-    if (iteration > depthLimit) {
+    if (iteration == depthLimit) {
         printf("\nIteration %d", iteration);
         return 333;
     }
