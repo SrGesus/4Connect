@@ -3,14 +3,14 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include <unistd.h>
 #include <time.h>
+#include <curses.h>
 
 //global variables
 int rows, columns;
 int count = 0;
 int depthLimit = 2;
-int defaultLimit = 10;
+int defaultLimit = 8;
 int debug = 1;
 
 //4Connect files

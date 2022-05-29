@@ -29,17 +29,15 @@ int minimax(int** board, int limit) {
             count++;
 
             if (utility == 1) { //if branch has a utility of 1, ignore the other branches, as it is the maximum
-                //print the Elapsed Time
                 timespec_get(&ts, TIME_UTC);
                 time_t duration = ts.tv_sec-start;
                 int durationms = ts.tv_nsec/1000000-startms;
                 printf("\nElapsed Time: %d %03d\nUsed Pruning B)", duration, durationms);
 
-                //finish
                 return i;
             }
 
-            //calculate the maximum utility
+            //update the maximum utility
             if (max < utility) {
                 max = utility;
                 position = i;
@@ -47,12 +45,6 @@ int minimax(int** board, int limit) {
         }
     }
 
-    //if no path to victory can be found look deeper
-    printf("Max %d limit %d defaultLimit %d", max, limit, defaultLimit);
-//    if (max < 0 && limit == defaultLimit) {
-//        printf("Welp");
-//        return minimax(board, limit+5);
-//    }
 
     //print the Elapsed Time
     timespec_get(&ts, TIME_UTC);
@@ -60,7 +52,8 @@ int minimax(int** board, int limit) {
     int durationms = ts.tv_nsec/1000000-startms;
     if (debug) {
        printf("\nElapsed Time: %d %03d", duration, durationms);
-       printf("Utility max: %d", max);
+       printf("\nMax %d limit %d defaultLimit %d", max, limit, defaultLimit);
+       printf("\nUtility max: %d", max);
     }
     return position;
 }
@@ -69,8 +62,10 @@ int minvalue (int** board, int iteration, int max) {
     //if the state is terminal return utility
     int utility = isTerminal(board);
     if (utility != 2) {
-        return (depthLimit + 1 - iteration) * utility;
+        //the number of plays left until the depthLimit + 1, the symmetric of it if MIN wins (or 0 for ties
+        return (depthLimit + 1 - iteration) * utility; 
     }
+
     //if it exceedes the imposed depth limit, return 333 - code for this situation
     if (iteration == depthLimit) {
         printf("\nDumped");
@@ -98,7 +93,8 @@ int minvalue (int** board, int iteration, int max) {
             if (min > utility && utility != 333) {
                 min = utility;
             }
-            //my implementation of alpha-beta pruning
+
+            //if the current minimum is smaller than the maximum of the iteration above, discard the other branches since they won't influence anything
             if (min < max) {
                 return min;
             }
@@ -106,7 +102,7 @@ int minvalue (int** board, int iteration, int max) {
     }
 
     if (min == 100) {
-        return 333; //if the min hasn't changed means all the options were discarded
+        return 333; //if the min hasn't changed means all the options were all beyond the depthLimit
     }
     return min;
 }
@@ -115,11 +111,11 @@ int maxvalue (int** board, int iteration, int min) {
     //if the state is terminal return utility
     int utility = isTerminal(board);
     if (utility != 2) { //2 is code for not a terminal state
+        //the number of plays left until the depthLimit + 1, the symmetric of it if MIN wins (or 0 for ties
         return (depthLimit + 1 - iteration) * utility;
     }
     //if it exceedes the imposed depth limit, return 333 - code for this situation
     if (iteration == depthLimit) {
-        //printf("\nIteration %d", iteration);
         return 333;
     }
 
@@ -144,7 +140,7 @@ int maxvalue (int** board, int iteration, int min) {
             if (max < utility && utility != 333) {
                 max = utility;
             }
-            //my implementation of alpha-beta pruning
+            //if the current maximum is greater than the minimum of the iteration above, discard the other branches since they won't influence anything
              if (max > min) {
                 return max;
             }

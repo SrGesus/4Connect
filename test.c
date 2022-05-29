@@ -6,18 +6,22 @@ int main(void) {
     int** board = createBoard();
     int player = 'O';
     int c; //user input
+    
+    //ncurses initialization
+    //initscr(); cbreak(); noecho();
 
     while (1) {
-        count = 0;
-        depthLimit = defaultLimit;
-        placeDisk(board, minimax(convertBoard(board, player), depthLimit), 'X');
-      
+     
         printBoard(board);
         printf("\nState: %d\nCount: %d\nEnter the column: ", isTerminal(board), count);
         scanf("%d", &c);
 
         placeDisk(board, c, player);
 
+        count = 0;
+        depthLimit = defaultLimit;
+        placeDisk(board, minimax(convertBoard(board, player), depthLimit), 'X');
+ 
 
    }
 }
