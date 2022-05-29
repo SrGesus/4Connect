@@ -1,6 +1,6 @@
 //"minimax" algorithm for the AI
-int minvalue(int** board, int iteration);
-int maxvalue(int** board, int iteration);
+int minvalue(int** board, int iteration, int max);
+int maxvalue(int** board, int iteration, int min);
 
 int minimax(int** board, int limit) {
     printf("\nBegin");
@@ -24,11 +24,11 @@ int minimax(int** board, int limit) {
             int** potentialstate = copyBoard(board); //allocates the memory for the new board
             placeDisk(potentialstate, i, 1);
 
-            int utility = minvalue(potentialstate, 1);
+            int utility = minvalue(potentialstate, 1, max);
             freeBoard(potentialstate); //free memory
             count++;
 
-/*            if (utility == 1) { //if branch has a utility of 1, ignore the other branches, as it is the maximum
+            if (utility == 1) { //if branch has a utility of 1, ignore the other branches, as it is the maximum
                 //print the Elapsed Time
                 timespec_get(&ts, TIME_UTC);
                 time_t duration = ts.tv_sec-start;
@@ -37,7 +37,7 @@ int minimax(int** board, int limit) {
 
                 //finish
                 return i;
-            }*/
+            }
 
             //calculate the maximum utility
             if (max < utility) {
@@ -65,11 +65,11 @@ int minimax(int** board, int limit) {
     return position;
 }
 
-int minvalue (int** board, int iteration) {
+int minvalue (int** board, int iteration, int max) {
     //if the state is terminal return utility
     int utility = isTerminal(board);
     if (utility != 2) {
-        return (depthLimit + 2 - iteration) * utility;
+        return (depthLimit + 1 - iteration) * utility;
     }
     //if it exceedes the imposed depth limit, return 333 - code for this situation
     if (iteration == depthLimit) {
@@ -85,18 +85,22 @@ int minvalue (int** board, int iteration) {
             int** potentialstate = copyBoard(board); //allocates memory to the new board
             placeDisk(potentialstate, i, -1);
 
-            utility = maxvalue (potentialstate, iteration+1);
+            utility = maxvalue (potentialstate, iteration+1, min);
             freeBoard(potentialstate); //free memory
             count++;
-
-/*            if (utility == -1) {  //if branch has a utility of -1, ignore the other branches as it is the minimum
-                printf("\nMin Prunin");
-                return utility;
-            }*/
             
+            //if player MIN wins next turn, ignore the other brances
+            if (utility * -1 == depthLimit - iteration) {
+                return utility;
+            }
+
             //calculate the minimum utility, discard if it is 333 (means it went over the depthLimit)
             if (min > utility && utility != 333) {
                 min = utility;
+            }
+            //my implementation of alpha-beta pruning
+            if (min < max) {
+                return min;
             }
         }
     }
@@ -107,15 +111,15 @@ int minvalue (int** board, int iteration) {
     return min;
 }
 
-int maxvalue (int** board, int iteration) {
+int maxvalue (int** board, int iteration, int min) {
     //if the state is terminal return utility
     int utility = isTerminal(board);
     if (utility != 2) { //2 is code for not a terminal state
-        return (depthLimit + 2 - iteration) * utility;
+        return (depthLimit + 1 - iteration) * utility;
     }
     //if it exceedes the imposed depth limit, return 333 - code for this situation
     if (iteration == depthLimit) {
-        printf("\nIteration %d", iteration);
+        //printf("\nIteration %d", iteration);
         return 333;
     }
 
@@ -127,17 +131,22 @@ int maxvalue (int** board, int iteration) {
             int** potentialstate = copyBoard(board); //allocates memory to the new board
             placeDisk(potentialstate, i, 1);
             
-            utility = minvalue (potentialstate, iteration+1);
+            utility = minvalue (potentialstate, iteration+1, max);
             freeBoard(potentialstate); //free memory
             count++;
 
-/*            if (utility == 1) {  //if branch has a utility of 1, ignore the other branches as it is the maximum
+            //if player MAX wins next turn, ignore the other branches
+            if (utility == depthLimit - iteration) {
                 return utility;
-            }*/
-            
+            }
+
             //calculate the maximum utility, discard if it is 333 (means it went over the depthLimit)
             if (max < utility && utility != 333) {
                 max = utility;
+            }
+            //my implementation of alpha-beta pruning
+             if (max > min) {
+                return max;
             }
         }
     }
