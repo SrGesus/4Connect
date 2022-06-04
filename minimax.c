@@ -7,15 +7,13 @@ int minimax(int** board, int limit) {
     //depthLimit is a global variable
     depthLimit = limit;
 
-    int max = -100; //arbitrarily small value
+    int max = -10000; //arbitrarily small value
     int position = 4;
 
-    //start the timer
     struct timespec ts;
-    timespec_get(&ts, TIME_UTC);
-    //start time in seconds (integer)
+    timespec_get(&ts, TIME_UTC); //get the current time with timespec
+    //start time in seconds and milliseconds 
     time_t start = ts.tv_sec;
-    //start time in milliseconds (integer)
     int startms = ts.tv_nsec/1000000;
 
     //turn position into the play with max utility
@@ -24,19 +22,10 @@ int minimax(int** board, int limit) {
             int** potentialstate = copyBoard(board); //allocates the memory for the new board
             placeDisk(potentialstate, i, 1);
 
-            int utility = minvalue(potentialstate, 1, max);
+            int utility = minvalue(potentialstate, 1, max); //begin a new branch
             freeBoard(potentialstate); //free memory
             count++;
-
-            if (utility == 1) { //if branch has a utility of 1, ignore the other branches, as it is the maximum
-                timespec_get(&ts, TIME_UTC);
-                time_t duration = ts.tv_sec-start;
-                int durationms = ts.tv_nsec/1000000-startms;
-                printf("\nElapsed Time: %d %03d\nUsed Pruning B)", duration, durationms);
-
-                return i;
-            }
-
+            
             //update the maximum utility
             if (max < utility) {
                 max = utility;
@@ -63,16 +52,15 @@ int minvalue (int** board, int iteration, int max) {
     int utility = isTerminal(board);
     if (utility != 2) {
         //the number of plays left until the depthLimit + 1, the symmetric of it if MIN wins (or 0 for ties
-        return (depthLimit + 1 - iteration) * utility; 
+        return (depthLimit + 1000 - iteration) * utility; 
     }
 
-    //if it exceedes the imposed depth limit, return 333 - code for this situation
+    //if it exceedes the imposed depth limit, return heuristics utility
     if (iteration == depthLimit) {
-        printf("\nDumped");
-        return 333;
+        return heuristics (board);
     }
     //an arbitrarily big value
-    int min = 100;
+    int min = 10000;
 
     //turn min into the smallest utility out of the branches
     for (int i = 0; i < columns; i++) {
@@ -83,14 +71,14 @@ int minvalue (int** board, int iteration, int max) {
             utility = maxvalue (potentialstate, iteration+1, min);
             freeBoard(potentialstate); //free memory
             count++;
-            
-            //if player MIN wins next turn, ignore the other brances
-            if (utility * -1 == depthLimit - iteration) {
+
+            //if the next turn results in MIN victory, discard other branches
+            if (utility * -1 == depthLimit - iteration + 999) {
                 return utility;
             }
 
-            //calculate the minimum utility, discard if it is 333 (means it went over the depthLimit)
-            if (min > utility && utility != 333) {
+            //update the minimum utility
+            if (min > utility) {
                 min = utility;
             }
 
@@ -101,9 +89,6 @@ int minvalue (int** board, int iteration, int max) {
         }
     }
 
-    if (min == 100) {
-        return 333; //if the min hasn't changed means all the options were all beyond the depthLimit
-    }
     return min;
 }
 
@@ -112,14 +97,14 @@ int maxvalue (int** board, int iteration, int min) {
     int utility = isTerminal(board);
     if (utility != 2) { //2 is code for not a terminal state
         //the number of plays left until the depthLimit + 1, the symmetric of it if MIN wins (or 0 for ties
-        return (depthLimit + 1 - iteration) * utility;
+        return (depthLimit + 1000 - iteration) * utility;
     }
-    //if it exceedes the imposed depth limit, return 333 - code for this situation
+    //if it exceedes the imposed depth limit, return 0 - code for this situation
     if (iteration == depthLimit) {
-        return 333;
+        return heuristics (board);
     }
 
-    int max = -100; //an arbitrarily small value
+    int max = -10000; //an arbitrarily small value
 
     //turn max into the greatest utility out of the branches
     for (int i = 0; i < columns; i++) {
@@ -131,13 +116,13 @@ int maxvalue (int** board, int iteration, int min) {
             freeBoard(potentialstate); //free memory
             count++;
 
-            //if player MAX wins next turn, ignore the other branches
-            if (utility == depthLimit - iteration) {
+            //if the next turn results in MAX victory, discard other branches
+            if (utility == depthLimit - iteration + 999) {
                 return utility;
             }
 
-            //calculate the maximum utility, discard if it is 333 (means it went over the depthLimit)
-            if (max < utility && utility != 333) {
+            //update maximum utility
+            if (max < utility) {
                 max = utility;
             }
             //if the current maximum is greater than the minimum of the iteration above, discard the other branches since they won't influence anything
@@ -146,8 +131,6 @@ int maxvalue (int** board, int iteration, int min) {
             }
         }
     }
-    if (max == -100) {
-        return 333; //if the max hasn't changed means all the options were discarded
-    }
+
     return max;
 }

@@ -11,17 +11,18 @@ int main(void) {
     //initscr(); cbreak(); noecho();
 
     while (1) {
-     
+    
         printBoard(board);
         printf("\nState: %d\nCount: %d\nEnter the column: ", isTerminal(board), count);
         scanf("%d", &c);
-
-        placeDisk(board, c, player);
+        
+        if (c < columns) { 
+            placeDisk(board, c, player);
+        }
 
         count = 0;
         depthLimit = defaultLimit;
         placeDisk(board, minimax(convertBoard(board, player), depthLimit), 'X');
  
-
    }
 }
